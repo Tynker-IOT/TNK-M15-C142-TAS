@@ -1,0 +1,44 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+    /* overflow: hidden; Prevents horizontal scrollbar */
+}
+
+h1 {
+    color: #343a40;
+    text-align: center;
+    margin-bottom: 20px;
+    width: 100%;
+}
+h2 {
+    color:aqua;
+    text-align: center;
+    background-color: black;
+    border-radius: 20px;
+    padding:2%;
+}
+h4 {
+    color: #ffffff;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    position: relative;
+}    
+
+#room{
+transition: background-image 0.5s ease-in-out;
+}
+
+#fan{
+    transition: opacity 0.5s ease-in-out;
+}
+.btn{
+    margin: 10px;
+}

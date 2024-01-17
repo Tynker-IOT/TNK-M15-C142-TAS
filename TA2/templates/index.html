@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Automation Control</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>    
+    <link rel="stylesheet" type="text/css" href="{{ '/static/style.css' }}" />
+    <script>
+        window.onload = function(){
+            setInterval(function () {
+                // Make an AJAX POST request using jQuery
+                $.ajax({
+                    url: "/getSensorData",
+                    type: "POST",
+                    success: function(data) {
+                        console.log("Got data: ", data);
+                        // Handle the response if needed
+                        document.getElementById("temperature").innerText= "Temp: "+ data["/Temperature"]+"°"
+                        document.getElementById("humidity").innerText= "Humidity: "+ data["/Humidity"]
+                        var fan= document.getElementById("fan")
+                        speed = data["motor_speed"]
+                        if(speed == 0){
+                            fan.src="static/fan1.gif"
+                            }
+                            else if(speed==1){
+                            fan.src="static/fan2.gif"
+                            }
+                            else{
+                            fan.src="static/fan3.gif"
+                            }
+                    },
+                    error: function(error) {
+                        console.error("Failed to send color data.", error);
+                    }
+                });
+                }, 5000);
+        }
+    </script>
+
+</head>
+<body style="background-color: #212529;">
+    <br>
+    <h1 style="color: #f8f9fa;">Home Automation Control</h1>
+    <div class="container">
+    <div class="row">
+        <div class="col-5">            
+           <div class="d-flex justify-content-between gap-4"> 
+            <h2 class="flex-fill" id="temperature">Temp: 0°</h1>
+            <h2 class="flex-fill" id="humidity">Humidity: 0</h2>
+            <br>
+            </div> 
+            <hr>
+            <h4>Light Control: </h4>
+            <div class="d-flex flex-wrap">
+                <button  onclick="light('red')" class="btn btn-danger"><i class="fas fa-circle"></i> Red</button>
+                <button  onclick="light('green')" class="btn btn-success"><i class="fas fa-circle"></i> Green</button>
+                <button  onclick="light('blue')" class="btn btn-primary"><i class="fas fa-circle"></i> Blue</button>
+                <button  onclick="light('on')" class="btn btn-light"><i class="fas fa-power-off"></i> Turn On</button>
+                <button  onclick="light('off')" class="btn btn-secondary"><i class="fas fa-power-off"></i> Turn Off</button>
+            </div>
+        </div>
+        <div id="room" class="col-7" style="background-image: url('static/room.png'); background-size: 100% 100%; position: relative;">
+            <!-- <img src = "static/room.png" width="100%"> -->
+            <img id="fan" src = "static/fan2.gif" width="30%" style="position: absolute; top: 5%; right:40%;">
+        </div>
+    </div>    
+</div>
+    <script>
+       
+        function light(color){
+            console.log("lights", color)
+            var room = document.getElementById('room')
+            if(color=="off"){
+                room.style.backgroundImage = "url('static/room_light_off.png')";
+            }
+            else if(color=="red")
+            {
+                room.style.backgroundImage = "url('static/room_lights_red.png')";
+            }
+            else if(color=="blue")
+            {
+                room.style.backgroundImage = "url('static/room_lights_blue.png')";
+            }
+            else if(color=="green")
+            {
+                room.style.backgroundImage = "url('static/room_light_green.png')";
+            }
+            else if(color=="on")
+            {
+                room.style.backgroundImage = "url('static/room.png')";
+            }
+            var colorData = {color: color};
+
+            $.ajax({
+                url: "/lightControl",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(colorData),
+                success: function(data) {
+                    console.log("Color data sent successfully!");
+                },
+                error: function(error) {
+                    console.error("Failed to send color data.", error);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
